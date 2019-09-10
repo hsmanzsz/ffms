@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/mvc 
+    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+    http://code.alibabatech.com/schema/dubbo 
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- 扫描控制层包，创建控制层对象 -->
+	<context:component-scan base-package="com.ffms.Controller"></context:component-scan>
+ 	<!-- a.自动加载处理器适配器和处理器映射器 -->
+ 	<!-- 并且在加载的时候启用转换器  -->
+ 	<mvc:annotation-driven></mvc:annotation-driven>
+	<!-- 3.视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- a.设置视图解析器的类型 -->
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+	</bean>
+	
+	<!-- 定义文件解析器 -->
+	<!-- id必须是multipartResolver -->
+	
+	
+</beans>

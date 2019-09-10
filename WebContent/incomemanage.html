@@ -1,0 +1,420 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>收入管理</title>
+    <link rel="stylesheet" href="css/ic.css">
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="jquery-easyui-1.3.3/themes/bootstrap/easyui.css">
+    <link rel="stylesheet" href="jquery-easyui-1.3.3/themes/icon.css">
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script src="js/vue-2.4.0.js"></script>
+</head>
+<body>
+    <div id="imApp" class="container" >
+        <div class="row">
+            <div class="panel panel-default">
+
+                <div class="panel-body">
+
+                    <!--弹框啊！-->
+                    <a class="btn btn-danger" data-toggle="modal" href='#modal-id'>添加一条数据</a>
+                    <div class="modal fade" id="modal-id">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">添加收入</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal">
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="incomeid" class="col-md-4 control-label">收入人:</label>
+                                                <div class="col-sm-8">
+                                                    <input v-model="addIncomer" type="text" class="form-control" id="incomeid" placeholder="收入人">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="sourceid" class="col-sm-4 control-label">收入来源:</label>
+                                                <div class="col-sm-8">
+                                                    <input v-model="addSource" type="text" class="form-control" id="sourceid" placeholder="来源">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="moneyid" class="col-md-4 control-label">金额:</label>
+                                                <div class="col-sm-8">
+                                                    <input v-model="addMoney" type="text" class="form-control" id="moneyid" placeholder="金额">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="ictype" class="col-sm-4 control-label">收入类型:</label>
+                                                <div class="col-sm-8">
+                                                    <select v-model="addDataid" id="sel" name="类型.." id="ictype" class="form-control" required="required">
+                                                        <option v-for="datadic in icType" :key="datadic.id" :value="datadic.id" v-text="datadic.datadicvalue"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="beizhu" class="col-md-4 control-label">备注:</label>
+                                                <div class="col-sm-8">
+                                                    <textarea v-model="addContent" name="" id="beizhu" class="form-control" rows="3" required="required"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="time" class="col-md-4 control-label">收入时间:</label>
+                                                <div class="col-sm-8">
+                                                    <input v-model="addIncomeTime" type="date" name="" id="input" class="form-control" value="" required="required" title="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button @click="incomeSave" type="button" class="btn btn-default btn-primary" data-dismiss="modal" >添加</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 提示框-->
+
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" style="color:palevioletred">提醒您:</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6 style="color: cornflowerblue">{{msg}}</h6>
+                                </div>
+                                <div class="modal-footer">
+                                    <button  type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                                    <button id="sure" type="button" class="btn btn-secondary" data-dismiss="modal">确定</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--按需求查找-->
+                    <div class="col-md-12 row" style="margin-top: 0px;">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label for="incomerID">收入人：</label>
+                                <input v-model="incomer" type="text" class="form-control input-sm" id="incomerID" placeholder="收入人">
+                            </div>
+                            <div class="form-group ml-1">
+                                <label for="sourceID">收入来源：</label>
+                                <input v-model="source" type="text" class="form-control" id="sourceID" placeholder="收入来源">
+                            </div>
+                            <div class="form-group">
+                                <label for="sel">收入类型：</label>
+                                <select v-model="dataid" id="sel" name="" id="input" class="form-control" required="required">
+                                    <option>类型..</option>
+                                    <option v-for="datadic in icType" :key="datadic.id" :value="datadic.id" v-text="datadic.datadicvalue"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="da">起止时间：</label>
+                                <input v-model="starttime" type="date" name="" id="da" class="form-control" value="" required="required" title="">
+                            </div>
+                            <div class="form-group">
+                                <label for="dat">~</label>
+                                <input v-model="endtime" type="date" name="" id="dat" class="form-control" value="" required="required" title="">
+                            </div>
+                            <button  @click="searcheIncome" type="button" class="sub btn btn-success">搜索</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!--表格展示-->
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <th>序号</th>
+                        <th>收入人</th>
+                        <th>收入来源</th>
+                        <th>金额</th>
+                        <th>收入类型</th>
+                        <th>备注</th>
+                        <th>收入时间</th>
+                        <th>操作</th>
+                    </thead>
+                    <tbody v-if="flag">
+                        <tr v-for="(income,index) in incomes" :key="income.id">
+                            <td v-text="index+1"></td>
+                            <td v-text="income.incomer"></td>
+                            <td v-text="income.source"></td>
+                            <td v-text="income.money"></td>
+                            <td v-text="income.datadicvalue"></td>
+                            <td v-text="income.content"></td>
+                            <td v-text="income.incometime"></td>
+                            <td>
+                                <a href="javascript:void(0);">修改</a>
+                                <a href="javascript:void(0);" @click="deleteIncome(index,income.id)">删除</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 分页-->
+        <div class="fenye_bottom">
+            <div class="datagrid-pager pagination">
+                <table cellspacing="0" cellpadding="0">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="pagination-page-list" v-model:value="rows">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="pagination-btn-separator"></div>
+                            </td>
+                            <td><a href="javascript:void(0)" class="l-btn l-btn-plain l-btn-disabled l-btn-plain-disabled"
+                                    group="" id=""><span class="l-btn-left"><span class="l-btn-text"><span
+                                                class="l-btn-empty pagination-first">&nbsp;</span></span></span></a></td>
+                            <td @click="pagePre"><a href="javascript:void(0)"
+                                    class="l-btn l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id=""><span
+                                        class="l-btn-left"><span class="l-btn-text"><span
+                                                class="l-btn-empty pagination-prev">&nbsp;</span></span></span></a></td>
+                            <td>
+                                <div class="pagination-btn-separator"></div>
+                            </td>
+                            <td><span style="padding-left:6px;">第</span></td>
+                            <td><input class="pagination-num" type="text" v-model:value="currentPage" size="2"></td>
+                            <td><span style="padding-right:6px;">共{{totalPage}}页</span></td>
+                            <td>
+                                <div class="pagination-btn-separator"></div>
+                            </td>
+                            <td @click="pagenext"><a href="javascript:void(0)"
+                                    class="l-btn l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id=""><span
+                                        class="l-btn-left"><span class="l-btn-text"><span
+                                                class="l-btn-empty pagination-next">&nbsp;</span></span></span></a></td>
+                            <td><a href="javascript:void(0)" class="l-btn l-btn-plain l-btn-disabled l-btn-plain-disabled"
+                                    group="" id=""><span class="l-btn-left"><span class="l-btn-text"><span
+                                                class="l-btn-empty pagination-last">&nbsp;</span></span></span></a></td>
+                            <td>
+                                <div class="pagination-btn-separator"></div>
+                            </td>
+                            <td><a href="javascript:void(0)" class="l-btn l-btn-plain" group="" id="">
+                                    <span class="l-btn-left">
+                                        <span class="l-btn-text"><span
+                                                class="l-btn-empty pagination-load">&nbsp;</span></span></span></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination-info">共{{totalsize}}记录</div>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var imVue = new Vue({
+            el: '#imApp',
+            data: {
+                flag:false,
+                currentPage:1,
+                totalPage: 0,
+                totalsize:0,
+                userid: -1,
+                roleid: -1,
+                rows:10,
+                icType:[{ "id": 0, "datadicname": "", "datadicvalue": "" },],
+                incomes:[{ "id": "", "userid": "", "roleid": "", "incomer": "", "source": "", "money": "", "dataid": "", "content": "", "incometime": "", "createtime": "", "updatetime": "", "datadicname": "", "datadicvalue": "", "username": "", "starttime": "", "endtime": "" },],
+                msg:'',
+
+                incomer:null,
+                source:'',
+                dataid:null,
+                starttime:null,
+                endtime:null,
+
+                addIncomer:null,
+                addSource:'',
+                addMoney:null,
+                addDataid:null,
+                addContent:null,
+                addIncomeTime:null
+            },
+            methods: {
+                pagenext:function(){
+                    if(this.currentPage<this.totalPage){
+                        this.currentPage = this.currentPage + 1;
+                        //点击 查看下一页的数据
+                        $.ajax({
+                            url: "getIncomeList.do",
+                            type: "POST",
+                            data: {
+                                "page": this.currentPage,
+                                "rows": this.rows,
+                                "roleid": this.roleid,
+                                "userid": this.userid,
+                            },
+                            success: (incomeList) => {
+                                this.incomes = incomeList.incomes;
+                            }
+                        })
+                    }
+                },
+                pagePre:function(){
+                    if(this.currentPage>1){
+                        this.currentPage =this.currentPage-1;
+                        $.ajax({
+                            url: "getIncomeList.do",
+                            type: "POST",
+                            data: {
+                                "page": this.currentPage,
+                                "rows": this.rows,
+                                "roleid": this.roleid,
+                                "userid": this.userid,
+                            },
+                            success: (incomeList) => {
+                                this.incomes = incomeList.incomes;
+                            }
+                        })
+                    }
+                },
+                searcheIncome: function(){
+                    //获取所有的信息也就是
+                    $.ajax({
+                        url:'getIncomeList.do',
+                        type:"POST",
+                        data:{
+                            "incomer":this.incomer,
+                            "source":this.source,
+                            "dataid":this.dataid,
+                            "starttime":this.starttime,
+                            "endtime":this.endtime,
+                            "page": this.currentPage,
+                            "rows": this.rows,
+                            "roleid": this.roleid,
+                            "userid": this.userid,
+                        },
+                        success:(incomelist)=>{
+                            this.incomes = [,];
+                            this.incomes = incomelist.incomes;
+                            //更新分页内容
+                            if (incomelist.total > 0) {
+                                this.flag = true;
+                            }
+                            this.totalsize = incomelist.total;
+                            if ((incomelist.total % this.rows) != 0) {
+                                this.totalPage = Math.ceil(incomelist.total / this.rows);
+                            } else {
+                                this.totalPage = (incomelist.total / this.rows);
+                            }
+                        }
+                    })
+                },
+                incomeSave:function(){
+                    //添加和修改信息
+                    $.ajax({
+                        url:"incomeSave.do",
+                        type:"POST",
+                        data:{
+                            "incomer":this.addIncomer,
+                            "source":this.addSource,
+                            "money":this.addMoney,
+                            "dataid":this.addDataid,
+                            "content":this.addContent,
+                            "userid":this.userid,
+                            "incometime":this.addIncomeTime
+                        },
+                        success:(remap)=>{
+                            alert(remap.errmsg);
+                            window.location.reload();
+                        }
+                    })
+                },
+                deleteIncome: function(index,id){
+                    this.msg = "是否确定删除！";
+                    $('#myModal').modal('show');
+                    $("#sure").click(()=>{
+                        this.incomes.splice(index, 1);
+                        $.ajax({
+                            url: "deleteIncome.do",
+                            type: "POST",
+                            data: {
+                                "id": id
+                            },
+                            success: (res) => {
+                                alert(res.errmsg);
+                                window.location.reload();
+                            }
+                        })
+                    })
+                    
+                }
+            },
+            beforeMount() {
+                $.ajax({
+                    url: "getSessionUser.do",
+                    type: "POST",
+                    async:false,
+                    success: (currentUser) => {
+                        this.userid = currentUser.id;
+                        this.roleid = currentUser.roleid;
+                    },
+                    error: function () {
+                        alert("加载异常");
+                    }
+                });
+            },
+            mounted() {
+                //在发送一起请求获取获取所有的数据
+                $.ajax({
+                    url: "getIncomeList.do",
+                    type: "POST",
+                    data: {
+                        "page":this.currentPage,
+                        "rows": this.rows,
+                        "roleid": this.roleid,
+                        "userid": this.userid,
+                    },
+                    success: (incomeList)=>{
+                        //集合数据数据
+                        this.incomes=incomeList.incomes;
+                        if(incomeList.total>0){
+                            this.flag=true;
+                        }
+                        this.totalsize = incomeList.total;
+                        if((incomeList.total% this.rows)!=0){
+                            this.totalPage = Math.ceil(incomeList.total / this.rows);
+                        }else{
+                            this.totalPage = (incomeList.total / this.rows);
+                        }
+                        alert(this.totalPage);
+                    }
+                });
+                $.ajax({
+                    url: "incomeManage.do",
+                    type: "POST",
+                    success: (Datadic) => {
+                        //获取人物 和支出的类型
+                        this.icType = Datadic;
+                    },
+                    error: function () {
+                        alert("加载异常");
+                    }
+                });
+            },
+        })
+    </script>
+</body>
+</html>

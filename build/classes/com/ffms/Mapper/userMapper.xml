@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ffms.Dao.UserDao">
+	<resultMap type="User" id="UserResult">
+		<result property="id" column="id"/>
+		<result property="username" column="username"/>
+		<result property="password" column="password"/>
+		<result property="truename" column="truename"/>
+		<result property="email" column="email"/>
+		<result property="phone" column="phone"/>
+		<result property="address" column="address"/>
+		<result property="sex" column="sex"/>
+		<result property="age" column="age"/>
+		<result property="appellation" column="appellation"/>
+		<result property="salary" column="salary"/>
+		<result property="card" column="card"/>
+		<result property="isvalid" column="isvalid"/>
+		<result property="createtime" column="createtime"/>
+		<result property="updatetime" column="updatetime"/>
+		<result property="rolename" column="rolename"/>
+		<collection property="roleIDsList"  column="id"  ofType="java.util.Map" javaType="java.util.ArrayList" select="selectRoleids" /> 
+	</resultMap>
+	
+	<select id="selectRoleids" parameterType="int" resultType="java.util.Map">
+	   select a.roleid,b.rolename from t_user_role a,t_role b where a.roleid=b.id and a.userid=#{id}
+	</select>	
+	<!--	用户名是否存在  -->
+	<select id="loginUsername" parameterType="User" resultMap="UserResult">
+	    select * from t_user where isvalid=1 and username=#{username}
+	</select>
+	<!--	密码 -->
+	<select id="loginPassword" parameterType="User" resultMap="UserResult">
+	    select * from t_user where isvalid=1 and username=#{username} and password=#{password}
+	</select>
+	<!-- 	权限  联查用户表和 管理表-->
+	<select id="loginRole" parameterType="User" resultMap="UserResult">
+		select * from t_user a,t_user_role b where a.isvalid=1 and a.id=b.userid and a.username=#{username} and a.password=#{password} and b.roleid=#{roleid}
+	</select>
+	
+	<!--	判断用户是否存在 -->
+	<select id="getUserIsExists" parameterType="User" resultType="int">
+		select count(*) from t_user
+		<where>
+			isvalid = 1
+			<if test="username!=null and username !='' ">
+				and username = #{username}
+			</if>
+			<if test="id!=null">
+				and id != #{id}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 	注册用户 -->
+	<insert id="addregist" parameterType="User">
+		insert into t_user values(null,#{username},#{password},null,null,null,null,null,null,null,null,null,1,#{createtime},null);
+	</insert>
+	
+	<!-- 	注册用户之后将用户的权限保存到表中 -->
+	<insert id="addRole" parameterType="User">
+		insert into t_user_role (select null,a.id,b.id from t_user a,t_role b where a.username=#{username} and b.id=#{roleid});
+	</insert>
+	
+	<!-- 	获取用户信息 -->
+	<select id="getAllUser" parameterType="Map" resultMap="UserResult">
+	    select id,username from t_user
+	    <where>
+	        isvalid=1
+	        <if test="userid!=null and roleid!=1">
+				and id=#{userid}
+			</if>
+	    </where>
+	</select>
+	
+</mapper>

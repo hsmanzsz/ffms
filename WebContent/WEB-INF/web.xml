@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>ffms</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <!-- 编码格式过滤器 -->
+  <filter>
+  	<filter-name>character</filter-name>
+  	<!-- 过滤器名称 CharacterEncodingFilter -->
+  	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+  	<!-- 这是编码格式 -->
+  	<init-param>
+  		<!-- 设置字符集的方SetEncoding -->
+  		<param-name>encoding</param-name>
+  		<param-value>UTF-8</param-value>
+  	</init-param>
+  </filter>
+  <filter-mapping>
+  	<filter-name>character</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <!-- 使用context初始化值 来加载 spring的配置文件 -->
+  <context-param>
+  	<!-- 和加载springmvc的核心配置文件的方法的名字相同 -->
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>classpath:spring.xml</param-value>
+  </context-param>
+  
+  <!-- 这个 是context监听器 contextLoaderListener  创建监听器-->
+  <listener>
+  	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  
+  <!-- srpingmvc前端控制器 -->
+  <servlet>
+  	<servlet-name>springmvc</servlet-name>
+  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  	<init-param>
+  		<!-- 加载springmvc的核心配置文件  
+  		通过 DispatcherServlet对象的 SetContextConfigLocation来加载springmvc的核心配置文件-->
+  		<param-name>contextConfigLocation</param-name>
+  		<param-value>classpath:springMVC.xml</param-value>
+  	</init-param>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>springmvc</servlet-name>
+  	<url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+</web-app>

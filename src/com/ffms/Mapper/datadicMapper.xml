@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ffms.Dao.DatadicDao">
+
+	<!-- 	查询支出的类型 -->
+	<select id="getDatadicIncome" resultType="Datadic">
+		select * from t_datadic where datadicname="收入类型"
+	</select>
+</mapper>
